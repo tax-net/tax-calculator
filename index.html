@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>부동산 세금 계산기 (2025)</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="header-title">
+        <h1>부동산 세금 계산기</h1>
+        <span class="year-badge">2025년 기준</span>
+      </div>
+      <a href="http://pf.kakao.com/_jLKVn/chat" target="_blank" rel="noopener" class="kakao-btn">
+        <!-- 카카오톡 아이콘 SVG -->
+        <svg class="kakao-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3C6.477 3 2 6.701 2 11.25c0 2.877 1.737 5.408 4.375 6.938L5.25 21l3.938-2.063C10.012 19.287 11 19.5 12 19.5c5.523 0 10-3.701 10-8.25S17.523 3 12 3z"/>
+        </svg>
+        <span>정석영 세무사 상담 바로가기</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- 탭 네비게이션 -->
+  <nav class="tabs">
+    <button class="tab active" data-tab="capital-gains">양도소득세</button>
+    <button class="tab" data-tab="gift-tax">증여세</button>
+    <button class="tab" data-tab="acquisition-tax">취득세</button>
+    <button class="tab" data-tab="reconstruction-tax">재건축 양도소득세</button>
+  </nav>
+
+  <main>
+    <!-- ======================== 양도소득세 탭 ======================== -->
+    <section id="capital-gains" class="tab-content active">
+      <div class="calculator-layout">
+        <!-- 입력 폼 -->
+        <div class="input-panel">
+          <h2>양도소득세 계산</h2>
+
+          <div class="form-group">
+            <label>양도물건 유형</label>
+            <select id="cg-asset-type">
+              <option value="일반 주택 상가 토지">일반 주택 / 상가 / 토지</option>
+              <option value="비사업용 토지">비사업용 토지</option>
+              <option value="2년 미만 주택">2년 미만 보유 주택</option>
+              <option value="2년 미만 건물 토지">2년 미만 보유 건물/토지</option>
+              <option value="1년 미만 주택">1년 미만 보유 주택</option>
+              <option value="1년 미만 건물 토지">1년 미만 보유 건물/토지</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>1세대 1주택 비과세 여부</label>
+            <div class="radio-group">
+              <label><input type="radio" name="cg-exempt" value="false" checked /> 과세 (해당 없음)</label>
+              <label><input type="radio" name="cg-exempt" value="true" /> 비과세 해당</label>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>보유기간 (년)</label>
+              <input type="number" id="cg-holding" value="0" min="0" max="50" />
+            </div>
+            <div class="form-group">
+              <label>거주기간 (년)</label>
+              <input type="number" id="cg-residence" value="0" min="0" max="50" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>장특공제 표 구분</label>
+            <select id="cg-deduction-table">
+              <option value="표1">표1 — 일반 (보유기간 × 2%, 최대 30%)</option>
+              <option value="표2">표2 — 1세대1주택 (보유 × 4% + 거주 × 4%, 최대 80%)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>중과세 여부</label>
+            <select id="cg-surcharge">
+              <option value="없음">없음</option>
+              <option value="20% 중과세">20% 중과세 (조정지역 2주택)</option>
+              <option value="30% 중과세">30% 중과세 (조정지역 3주택+)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>공동명의 여부</label>
+            <div class="radio-group">
+              <label><input type="radio" name="cg-joint" value="false" checked /> 단독명의</label>
+              <label><input type="radio" name="cg-joint" value="true" /> 공동명의 (50:50)</label>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>양도가액 (전체)</label>
+              <div class="input-with-unit">
+                <input type="text" id="cg-sale-price" value="0" inputmode="numeric" autocomplete="off" />
+                <span class="unit">원</span>
+              </div>
+              <span class="helper" id="cg-sale-price-display"></span>
+            </div>
+            <div class="form-group">
+              <label>매입가액 (전체)</label>
+              <div class="input-with-unit">
+                <input type="text" id="cg-purchase-price" value="0" inputmode="numeric" autocomplete="off" />
+                <span class="unit">원</span>
+              </div>
+              <span class="helper" id="cg-purchase-price-display"></span>
+            </div>
+          </div>
+
+          <button class="calc-btn" onclick="calcCapitalGains()">계산하기</button>
+        </div>
+
+        <!-- 결과 패널 -->
+        <div class="result-panel" id="cg-result" style="display:none;">
+          <h2>계산 결과</h2>
+          <div class="result-highlight" id="cg-final"></div>
+
+          <table class="result-table">
+            <tbody id="cg-table"></tbody>
+          </table>
+
+          <div class="note" id="cg-note"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================== 증여세 탭 ======================== -->
+    <section id="gift-tax" class="tab-content">
+      <div class="calculator-layout">
+        <div class="input-panel">
+          <h2>증여세 계산</h2>
+
+          <div class="form-group">
+            <label>수증자 (받는 사람) 관계</label>
+            <select id="gt-relation">
+              <option value="배우자">배우자 (공제 6억원)</option>
+              <option value="직계비속 (성인)" selected>직계비속 성인 — 자녀 등 (공제 5천만원)</option>
+              <option value="직계비속 (미성년)">직계비속 미성년 (공제 2천만원)</option>
+              <option value="직계존속">직계존속 — 부모 등 (공제 5천만원)</option>
+              <option value="기타 친족">기타 친족 (공제 1천만원)</option>
+              <option value="관계 없음">관계 없음 (공제 없음)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>증여재산가액</label>
+            <div class="input-with-unit">
+              <input type="text" id="gt-amount" value="0" inputmode="numeric" autocomplete="off" />
+              <span class="unit">원</span>
+            </div>
+            <span class="helper" id="gt-amount-display"></span>
+          </div>
+
+          <div class="form-group">
+            <label>재차증여재산 <span class="tip">(10년 내 이전 증여액)</span></label>
+            <div class="input-with-unit">
+              <input type="text" id="gt-prior" value="0" inputmode="numeric" autocomplete="off" />
+              <span class="unit">원</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>비과세 금액</label>
+              <div class="input-with-unit">
+                <input type="text" id="gt-nontax" value="0" inputmode="numeric" autocomplete="off" />
+                <span class="unit">원</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>과세가액 불산입</label>
+              <div class="input-with-unit">
+                <input type="text" id="gt-exclusion" value="0" inputmode="numeric" autocomplete="off" />
+                <span class="unit">원</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>채무 (인수액)</label>
+              <div class="input-with-unit">
+                <input type="text" id="gt-debt" value="0" inputmode="numeric" autocomplete="off" />
+                <span class="unit">원</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>납부세액공제</label>
+              <div class="input-with-unit">
+                <input type="text" id="gt-paid-credit" value="0" inputmode="numeric" autocomplete="off" />
+                <span class="unit">원</span>
+              </div>
+            </div>
+          </div>
+
+          <button class="calc-btn" onclick="calcGiftTax()">계산하기</button>
+        </div>
+
+        <div class="result-panel" id="gt-result" style="display:none;">
+          <h2>계산 결과</h2>
+          <div class="result-highlight" id="gt-final"></div>
+          <table class="result-table">
+            <tbody id="gt-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================== 취득세 탭 ======================== -->
+    <section id="acquisition-tax" class="tab-content">
+      <div class="calculator-layout">
+        <div class="input-panel">
+          <h2>취득세 계산</h2>
+
+          <div class="form-group">
+            <label>취득 물건</label>
+            <select id="at-asset-type" onchange="updateAcquisitionForm()">
+              <option value="국민주택 85이하">국민주택 (전용 85㎡ 이하)</option>
+              <option value="국민주택 85초과">국민주택 초과 (전용 85㎡ 초과)</option>
+              <option value="일반 건물/토지">일반 건물 / 토지</option>
+              <option value="농지">농지</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>취득 원인</label>
+            <select id="at-reason" onchange="updateAcquisitionForm()">
+              <option value="매매">매매</option>
+              <option value="증여">증여</option>
+              <option value="상속">상속</option>
+              <option value="신축">신축</option>
+            </select>
+          </div>
+
+          <!-- 주택 매매 전용 옵션 -->
+          <div id="at-house-options">
+            <div class="form-group">
+              <label>보유 주택 수 (취득 후 기준)</label>
+              <select id="at-house-count">
+                <option value="1주택">1주택</option>
+                <option value="2주택">2주택</option>
+                <option value="3주택">3주택</option>
+                <option value="4주택 이상">4주택 이상</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>조정대상지역 여부</label>
+              <div class="radio-group">
+                <label><input type="radio" name="at-zone" value="true" checked /> 조정대상지역</label>
+                <label><input type="radio" name="at-zone" value="false" /> 비조정대상지역</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 증여 전용 옵션 -->
+          <div id="at-gift-options" style="display:none;">
+            <div class="form-group">
+              <label>기준시가</label>
+              <div class="radio-group">
+                <label><input type="radio" name="at-gift-value" value="false" checked /> 3억원 미만</label>
+                <label><input type="radio" name="at-gift-value" value="true" /> 3억원 이상</label>
+              </div>
+            </div>
+            <div class="form-group" id="at-gift-zone-wrap">
+              <label>조정대상지역 여부</label>
+              <div class="radio-group">
+                <label><input type="radio" name="at-gift-zone" value="true" checked /> 조정대상지역</label>
+                <label><input type="radio" name="at-gift-zone" value="false" /> 비조정대상지역</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 상속 전용 옵션 -->
+          <div id="at-inherit-options" style="display:none;">
+            <div class="form-group">
+              <label>1가구 1주택 상속 여부</label>
+              <div class="radio-group">
+                <label><input type="radio" name="at-inherit-1h" value="true" checked /> 1가구 1주택 해당</label>
+                <label><input type="radio" name="at-inherit-1h" value="false" /> 해당 없음</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>취득가액</label>
+            <div class="input-with-unit">
+              <input type="text" id="at-price" value="0" inputmode="numeric" autocomplete="off" />
+              <span class="unit">원</span>
+            </div>
+            <span class="helper" id="at-price-display"></span>
+          </div>
+
+          <button class="calc-btn" onclick="calcAcquisitionTax()">계산하기</button>
+        </div>
+
+        <div class="result-panel" id="at-result" style="display:none;">
+          <h2>계산 결과</h2>
+          <div class="result-highlight" id="at-final"></div>
+          <table class="result-table">
+            <tbody id="at-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================== 재건축 양도소득세 탭 ======================== -->
+    <section id="reconstruction-tax" class="tab-content">
+      <div class="calculator-layout">
+        <div class="input-panel">
+          <h2>재건축 양도소득세 계산</h2>
+          <p class="section-note">유형: 원조합원 · 신축 주택 양도 · 청산금 납부 · 토지 면적 감소</p>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>신축 주택 양도가액</label>
+              <div class="input-with-unit">
+                <input type="text" id="rc-sale-price" value="0" inputmode="numeric" autocomplete="off" />
+                <span class="unit">원</span>
+              </div>
+              <span class="helper" id="rc-sale-price-display"></span>
+            </div>
+            <div class="form-group">
+              <label>신축 주택 필요경비</label>
+              <div class="input-with-unit">
+                <input type="text" id="rc-expense" value="0" inputmode="numeric" autocomplete="off" />
+                <span class="unit">원</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>권리가액 <span class="tip">(관리처분계획상 평가액)</span></label>
+              <div class="input-with-unit">
+                <input type="text" id="rc-rights" value="0" inputmode="numeric" autocomplete="off" />
+                <span class="unit">원</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>청산금 납부액</label>
+              <div class="input-with-unit">
+                <input type="text" id="rc-settlement" value="0" inputmode="numeric" autocomplete="off" />
+                <span class="unit">원</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>종전 주택 취득가액</label>
+              <div class="input-with-unit">
+                <input type="text" id="rc-acq-price" value="0" inputmode="numeric" autocomplete="off" />
+                <span class="unit">원</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>종전 주택 필요경비</label>
+              <div class="input-with-unit">
+                <input type="text" id="rc-acq-expense" value="0" inputmode="numeric" autocomplete="off" />
+                <span class="unit">원</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row form-row-3">
+            <div class="form-group">
+              <label>신축 주택 양도일</label>
+              <input type="date" id="rc-sale-date" value="" />
+            </div>
+            <div class="form-group">
+              <label>관리처분계획인가일</label>
+              <input type="date" id="rc-mgmt-date" value="" />
+            </div>
+            <div class="form-group">
+              <label>종전 주택 취득일</label>
+              <input type="date" id="rc-acq-date" value="" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>1세대 1주택 비과세 여부</label>
+            <div class="radio-group">
+              <label><input type="radio" name="rc-exempt" value="true" checked /> 비과세 해당</label>
+              <label><input type="radio" name="rc-exempt" value="false" /> 과세 (해당 없음)</label>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>기존 부동산 장특공제 표</label>
+              <select id="rc-old-table">
+                <option value="표1">표1 — 일반 (보유 × 2%)</option>
+                <option value="표2">표2 — 1세대1주택 (보유 × 4% + 거주 × 4%)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>기존 부동산 거주기간 (년) <span class="tip">표2 시</span></label>
+              <input type="number" id="rc-old-residence" value="0" min="0" max="50" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>청산금 납부분 장특공제 표</label>
+              <select id="rc-settle-table">
+                <option value="표1">표1 — 일반 (보유 × 2%)</option>
+                <option value="표2">표2 — 1세대1주택 (보유 × 4% + 거주 × 4%)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>청산금 납부분 거주기간 (년) <span class="tip">표2 시</span></label>
+              <input type="number" id="rc-settle-residence" value="0" min="0" max="50" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>공동명의 여부</label>
+            <div class="radio-group">
+              <label><input type="radio" name="rc-joint" value="false" checked /> 단독명의</label>
+              <label><input type="radio" name="rc-joint" value="true" /> 공동명의 (50:50)</label>
+            </div>
+          </div>
+
+          <button class="calc-btn" onclick="calcReconstructionTax()">계산하기</button>
+        </div>
+
+        <div class="result-panel" id="rc-result" style="display:none;">
+          <h2>계산 결과</h2>
+          <div class="result-highlight" id="rc-final"></div>
+          <table class="result-table">
+            <tbody id="rc-table"></tbody>
+          </table>
+          <div class="note" id="rc-note"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>본 계산기는 참고용이며, 실제 세금은 세무사 상담을 통해 확인하시기 바랍니다.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,428 @@
+/* ============================================================
+   기본 설정
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  background: #f0f4f8;
+  color: #1a2b3c;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================================
+   헤더
+   ============================================================ */
+header {
+  background: linear-gradient(135deg, #1a3a5c 0%, #2563a8 100%);
+  color: white;
+  padding: 24px 32px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+}
+
+.header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* 카카오톡 상담 버튼 */
+.kakao-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #FEE500;
+  color: #391B1B;
+  text-decoration: none;
+  padding: 10px 18px;
+  border-radius: 24px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  flex-shrink: 0;
+}
+
+.kakao-btn:hover {
+  background: #FFEB00;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+  transform: translateY(-1px);
+}
+
+.kakao-btn:active { transform: translateY(0); }
+
+.kakao-icon {
+  width: 20px;
+  height: 20px;
+  fill: #391B1B;
+  flex-shrink: 0;
+}
+
+header h1 {
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.year-badge {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* ============================================================
+   탭 네비게이션
+   ============================================================ */
+.tabs {
+  display: flex;
+  background: white;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 32px;
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: 16px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #6b7c93;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.tab:hover { color: #2563a8; }
+
+.tab.active {
+  color: #1a3a5c;
+  border-bottom-color: #2563a8;
+}
+
+/* ============================================================
+   메인 컨텐츠
+   ============================================================ */
+main {
+  max-width: 1100px;
+  margin: 28px auto;
+  padding: 0 32px;
+  flex: 1;
+  width: 100%;
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ============================================================
+   계산기 레이아웃 (좌: 입력 / 우: 결과)
+   ============================================================ */
+.calculator-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .calculator-layout { grid-template-columns: 1fr; }
+  main { padding: 0 16px; }
+  .tabs { padding: 0 16px; }
+}
+
+/* ============================================================
+   입력 패널
+   ============================================================ */
+.input-panel, .result-panel {
+  background: white;
+  border-radius: 14px;
+  padding: 28px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.input-panel h2, .result-panel h2 {
+  font-size: 1.15rem;
+  color: #1a3a5c;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e8f0fe;
+}
+
+/* ============================================================
+   폼 요소
+   ============================================================ */
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #3d5166;
+  margin-bottom: 6px;
+}
+
+label .tip {
+  font-weight: 400;
+  color: #8a9ab0;
+  font-size: 0.82rem;
+}
+
+input[type="text"], input[type="number"], input[type="date"], select {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid #d0dae8;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: #1a2b3c;
+  background: #fafcff;
+  transition: border-color 0.2s;
+  appearance: auto;
+}
+
+input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus, select:focus {
+  outline: none;
+  border-color: #2563a8;
+  background: white;
+}
+
+.input-with-unit {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.input-with-unit input {
+  border-radius: 8px 0 0 8px;
+  border-right: none;
+}
+
+.unit {
+  padding: 9px 12px;
+  background: #e8f0fe;
+  border: 1.5px solid #d0dae8;
+  border-left: none;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.88rem;
+  color: #3d5166;
+  white-space: nowrap;
+}
+
+.helper {
+  display: block;
+  font-size: 0.8rem;
+  color: #2563a8;
+  margin-top: 4px;
+  font-weight: 500;
+  min-height: 16px;
+}
+
+/* 라디오 그룹 */
+.radio-group {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  margin: 0;
+}
+
+.radio-group input[type="radio"] {
+  width: auto;
+  accent-color: #2563a8;
+}
+
+/* ============================================================
+   계산 버튼
+   ============================================================ */
+.calc-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #1a3a5c, #2563a8);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 8px;
+  font-family: inherit;
+  letter-spacing: 0.5px;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.calc-btn:hover { opacity: 0.9; }
+.calc-btn:active { transform: scale(0.98); }
+
+/* ============================================================
+   결과 패널
+   ============================================================ */
+.result-highlight {
+  background: linear-gradient(135deg, #1a3a5c, #2563a8);
+  color: white;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.result-highlight .label {
+  font-size: 0.9rem;
+  opacity: 0.85;
+  margin-bottom: 6px;
+}
+
+.result-highlight .amount {
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.result-highlight .sub {
+  font-size: 0.82rem;
+  opacity: 0.8;
+  margin-top: 6px;
+}
+
+/* 결과 테이블 */
+.result-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.result-table tr {
+  border-bottom: 1px solid #eef2f8;
+}
+
+.result-table tr:last-child { border-bottom: none; }
+
+.result-table td {
+  padding: 10px 4px;
+  color: #3d5166;
+}
+
+.result-table td:first-child {
+  font-weight: 600;
+  color: #1a2b3c;
+  width: 50%;
+}
+
+.result-table td:last-child {
+  text-align: right;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.result-table tr.divider td {
+  padding-top: 14px;
+  border-top: 2px solid #d0dae8;
+  font-weight: 700;
+  color: #1a3a5c;
+}
+
+.result-table tr.final td {
+  padding: 12px 4px;
+  background: #f0f4f8;
+  font-weight: 800;
+  font-size: 1rem;
+  color: #1a3a5c;
+  border-radius: 6px;
+}
+
+.result-table .rate {
+  color: #e05a2b;
+  font-size: 0.82rem;
+}
+
+/* 주석 */
+.note {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: #fff9e6;
+  border-left: 3px solid #f5a623;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.83rem;
+  color: #7a6000;
+  line-height: 1.6;
+}
+
+/* ============================================================
+   에러 / 로딩
+   ============================================================ */
+.error-msg {
+  background: #fff0f0;
+  border-left: 3px solid #e05a2b;
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+  color: #c0392b;
+  font-size: 0.88rem;
+  margin-top: 8px;
+}
+
+/* ============================================================
+   재건축 탭 전용
+   ============================================================ */
+.form-row-3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.section-note {
+  font-size: 0.82rem;
+  color: #6b7c93;
+  margin-bottom: 18px;
+  margin-top: -16px;
+}
+
+.rc-section-header {
+  padding: 12px 4px 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #2563a8;
+  border-top: 1px solid #e8f0fe;
+}
+
+/* ============================================================
+   푸터
+   ============================================================ */
+footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 0.82rem;
+  color: #8a9ab0;
+  border-top: 1px solid #e0e8f0;
+  margin-top: 12px;
+}
